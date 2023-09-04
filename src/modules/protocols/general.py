@@ -7,8 +7,8 @@ class GeneralPacketType(Enum):
     CONNECT = 0
     ACK = 1
     HASH_TYPE = 2
-    WORDS = 3
-    PASSWORD = 4
+    WORD_BLOCK = 3
+    FOUND_PASSWORD = 4
     EXIT = 5
 
 
