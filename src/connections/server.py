@@ -19,6 +19,7 @@ class Server:
 
         self.is_running = True
         self.is_attacking = False
+
         self.connected_clients = list()
 
     def main(self):

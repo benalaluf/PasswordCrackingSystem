@@ -49,6 +49,7 @@ class Packet:
                             self.payload
         return self.packet_bytes
 
+
     @staticmethod
     def _pack(pack_format: str, data):
         return struct.pack(pack_format, data)
