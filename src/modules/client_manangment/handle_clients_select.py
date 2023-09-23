@@ -1,42 +1,66 @@
-import select
 import socket
+import threading
+
+import select
+import sys
+
+from src.modules.client_manangment.client_data import ClientData
+from src.modules.protocols.general import GeneralPacketType
+from src.modules.protocols.protocol import HandelPacket, PacketType, Packet, SendPacket
 
 
-class HandleClientConnections:
+class HandleClientConnect:
 
-    def __init__(self, server_socket: socket.socket):
-        self.server_socket = server_socket
-        self.connected_clients = list()
+    connected_clients = list()
 
-    def start_listening(self):
-        self.server_socket.listen(1)
+    def __init__(self, addr):
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.bind(addr)
 
-    def on_new_client(self):
-        pass
+    def accept_connection(self):
+        conn, addr = self.server_socket.accept()
+        HandleClientConnect.connected_clients.append(ClientData(conn, addr))
+        print(f"New client: {addr}")
 
-listen_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    def start_server(self):
+        self.server_socket.listen()
+        print("LISTENING...")
+        while True:
+            readable, _, _ = select.select([client.conn for client in HandleClientConnect.connected_clients] + [self.server_socket], [], [])
+            self.__show_connected_clients()
+            for client in readable:
+                if client == self.server_socket:
+                    self.accept_connection()
+
+                else:
+                    self.__handle(client)
+
+    def __broadcast(self, sender_sock, packet):
+        packet = Packet(PacketType.START_ATTACK)
+        for client_sock in HandleClientConnect.connected_clients:
+            if client_sock != sender_sock:
+                SendPacket.send_packet(client_sock, packet)
+
+    def __handle(self, conn):
+        try:
+            packet = HandelPacket.recv_packet(conn)
+            # print(f"Data received from client: {packet.payload.decode()}")
+            SendPacket.send_packet(conn, packet)
+
+        except (ConnectionResetError, ConnectionAbortedError):
+            self.connected_clients.remove(conn)
+            print(f"A client disconnected")
+
+    def __show_connected_clients(self):
+        print('-' * 20)
+        for i, client in enumerate(self.connected_clients, start=1):
+            print(f'{i}. {client.addr}')
+        print('-' * 20)
+
+    def get_connected_clients(self):
+        return self.connected_clients
 
 
-if __name__ == '__main__':
-
-client_sockets = []
-
-try:
-    while True:
-
-        ready_to_read, ready_to_write, in_error = select.select(client_sockets + [listen_sock], [], [])
-
-        for sock in ready_to_read:
-
-            if sock == listen_sock:
-
-                client_sock, client_address = listen_sock.accept()
-                client_sockets.append(client_sock)
-                print(f"New client: {client_address}")
-
-                client_sock.sendall(welcome_msg.encode())
-
-            else:
-
-                client_msg = sock.recv(FLOW_CONTROL).decode()
-                print(f"Client sent: {client_msg}")
+if __name__ == "__main__":
+    server = HandleClientConnect(('localhost', 12345))
+    server.start_server()
