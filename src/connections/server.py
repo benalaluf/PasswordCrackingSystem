@@ -89,16 +89,6 @@ class Server:
             print(f'{i}. {client.client_id}')
         print('-' * 20)
 
-<<<<<<< HEAD
     def get_connected_clients(self):
        return self.connected_clients
-=======
-    def __split_wordlist(self):
-        pass
 
-    def __choose_wordlist(self):
-        pass
-
-    def __start_dict_attack(self):
-        pass
->>>>>>> parent of 230e069 (added rockyou word list)
