@@ -4,7 +4,7 @@ import threading
 
 from src.modules.client_manangment.client_data import ClientData
 from src.modules.protocols.general import GeneralPacketType
-from src.modules.protocols.protocol import HandelPacket, PacketType
+from src.modules.protocols.protocol import HandelPacket, PacketType, Packet, SendPacket
 
 
 class Server:
@@ -42,21 +42,27 @@ class Server:
 
     def __start_attack(self):
         print("starting attack!!!")
-        self.__choose_wordlist()
         self.__show_connected_clients()
+        self.__broadcast()
         self.__handle_all_clients()
-        self.__split_wordlist()
+
+    def __broadcast(self):
+        packet = Packet(PacketType.START_ATTACK)
+        for client in self.connected_clients:
+            SendPacket.send_packet(client.conn, packet)
+
 
     def __on_new_client(self, conn, addr):
         self.connected_clients.append(ClientData(conn, addr))
 
     def __handle(self, conn: socket.socket):
         packet = HandelPacket.recv_packet(conn)
+        if packet.packet_type == PacketType.CONNECT:
+            print(f"connectoin from {conn.getpeername()}")
 
-        if packet.packet_type == PacketType.GENERAL.value:
-            if packet.packet_sub_type == GeneralPacketType.PASSWORD:
-                print(f"password is: {packet.payload.decode()}")
-                self.is_attacking = False
+        if packet.packet_type == PacketType.FOUND_PASSWORD:
+            print(f"password is: {packet.payload.decode()}")
+            self.is_attacking = False
 
     def __handle_all_clients(self):
         for client in self.connected_clients:
@@ -73,7 +79,7 @@ class Server:
                 self.__show_connected_clients()
 
             if command == "attack":
-                print("attacking")
+                self.__start_attack()
 
             print('try "ls" to view connected clients ;)')
 
@@ -83,6 +89,10 @@ class Server:
             print(f'{i}. {client.client_id}')
         print('-' * 20)
 
+<<<<<<< HEAD
+    def get_connected_clients(self):
+       return self.connected_clients
+=======
     def __split_wordlist(self):
         pass
 
@@ -91,3 +101,4 @@ class Server:
 
     def __start_dict_attack(self):
         pass
+>>>>>>> parent of 230e069 (added rockyou word list)
