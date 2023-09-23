@@ -86,7 +86,7 @@ class Server:
     def __show_connected_clients(self):
         print('-' * 20)
         for i, client in enumerate(self.connected_clients, start=1):
-            print(f'{i}. {client.client_id}')
+            print(f'{i}. {client.addr}')
         print('-' * 20)
 
     def get_connected_clients(self):

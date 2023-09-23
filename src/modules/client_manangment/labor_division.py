@@ -14,11 +14,11 @@ class LaborDivision:
     def get_password_chunk(self):
         chunk = next(self.read_file_genarator)
         if not chunk:
-            print("finished dict")
+            pass
         else:
             return chunk
 
-    def read_file_in_chunks(self, chunk_size=1):
+    def read_file_in_chunks(self, chunk_size=100):
         with open(self.dict_path, 'r') as file:
             lines = ''
             while True:
@@ -27,10 +27,11 @@ class LaborDivision:
                     if not line:
                         break
                     lines += line
-                if lines is not '':
+                if lines != '':
                     yield lines
                     lines = ''
-                yield None
+                else:
+                    yield None
 
 
     def give_words_to_client(self, client: ClientData):
@@ -41,12 +42,17 @@ class LaborDivision:
 
 
 if __name__ == '__main__':
-    labor = LaborDivision("/Users/blu/GitHub/PasswordCrackingSystem/src/modules/wordlists/wordlist1.txt")
+    labor = LaborDivision("/Users/blu/GitHub/PasswordCrackingSystem/src/modules/wordlists/8Digit.lst")
 
 
     print(labor.get_password_chunk())
+    print('-'*20)
     print(labor.get_password_chunk())
+    print('-'*20)
     print(labor.get_password_chunk())
+    print('-'*20)
     print(labor.get_password_chunk())
+    print('-'*20)
     print(labor.get_password_chunk())
+    print('-'*20)
     print(labor.get_password_chunk())

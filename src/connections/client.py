@@ -33,7 +33,7 @@ class Client:
     def __connect(self):
         print(f'connecting to {self.addr}')
         self.victim.connect(self.addr)
-        packet = Packet(PacketType.FOUND_PASSWORD, "iloveniggers".encode())
+        packet = Packet(PacketType.FOUND_PASSWORD, "password12345".encode())
         SendPacket.send_packet(self.victim, packet)
 
     def __on_connect(self, conn, addr):
