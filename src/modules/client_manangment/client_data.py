@@ -13,7 +13,7 @@ class ClientData:
     client_ids: ClassVar[set] = field(repr=False, default=set())
 
     def __post_init__(self):
-        self.victim_id = self.__generate_id()
+        self.client_id = self.__generate_id()
 
     # purge
     def __generate_id(self):

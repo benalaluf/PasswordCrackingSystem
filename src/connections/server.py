@@ -69,18 +69,18 @@ class Server:
             command = command_components[0]
             command_args = command_components[1:]
 
-            if raw_command == "client.show":
+            if raw_command == "ls":
                 self.__show_connected_clients()
 
             if command == "attack":
                 print("attacking")
 
-            print('try client.show ;)')
+            print('try "ls" to view connected clients ;)')
 
     def __show_connected_clients(self):
         print('-' * 20)
         for i, client in enumerate(self.connected_clients, start=1):
-            print(f'{i}. {client.addr}')
+            print(f'{i}. {client.client_id}')
         print('-' * 20)
 
     def __split_wordlist(self):
