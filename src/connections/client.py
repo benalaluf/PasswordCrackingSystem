@@ -1,6 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
 
-from src.modules.protocols.general import GeneralPacketType
 from src.modules.protocols.protocol import HandelPacket, Packet, PacketType, SendPacket
 
 

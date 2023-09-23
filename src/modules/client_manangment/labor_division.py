@@ -1,43 +1,52 @@
+from src.modules.client_manangment.client_data import ClientData
+from src.modules.client_manangment.handle_clients import ClientCommunicationHandler
+from src.modules.protocols.protocol import Packet, PacketType
+
+
 class LaborDivision:
 
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, dict_path):
+        self.dict_path = dict_path
+        self.is_finished_labor = False
+        self.read_file_genarator = self.read_file_in_chunks()
+        self.handler = ClientCommunicationHandler()
 
-    def get_100_words(self):
-        pass
+    def get_password_chunk(self):
+        chunk = next(self.read_file_genarator)
+        if not chunk:
+            print("finished dict")
+        else:
+            return chunk
 
-    def read_file_in_chunks(self, chunk_size=100):
-        print('start')
-        with open(self.file, 'r') as file:
+    def read_file_in_chunks(self, chunk_size=1):
+        with open(self.dict_path, 'r') as file:
+            lines = ''
             while True:
-                chunk = file.readlines(chunk_size)
-                if not chunk:
-                    break
-                yield chunk
-
-niga ='/Users/blu/GitHub/PasswordCrackingSystem/src/modules/wordlists/rockyou.txt'
-if __name__ == '__main__':
-    def read_large_file_in_chunks(file_path, chunk_size=100):
-        with open(file_path, 'r') as file:
-            while True:
-                lines = []
                 for _ in range(chunk_size):
                     line = file.readline()
                     if not line:
                         break
-                    lines.append(line)
-                if not lines:
-                    break
-                yield lines
+                    lines += line
+                if lines is not '':
+                    yield lines
+                    lines = ''
+                yield None
 
 
-    # Example usage:
-    file_path = niga
-    file_generator = read_large_file_in_chunks(file_path)
+    def give_words_to_client(self, client: ClientData):
+        chunk = self.get_password_chunk()
+        packet = Packet(PacketType.PASSWORD_CHUNK, payload=chunk.encode())
+        self.handler.send_to_client(client, packet)
 
-    for chunk in file_generator:
-        for line in chunk:
-            # Process each line here
-            print(line.strip())
 
-    # Process the lines in this chunk as needed
+
+if __name__ == '__main__':
+    labor = LaborDivision("/Users/blu/GitHub/PasswordCrackingSystem/src/modules/wordlists/wordlist1.txt")
+
+
+    print(labor.get_password_chunk())
+    print(labor.get_password_chunk())
+    print(labor.get_password_chunk())
+    print(labor.get_password_chunk())
+    print(labor.get_password_chunk())
+    print(labor.get_password_chunk())

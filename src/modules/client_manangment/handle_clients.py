@@ -2,7 +2,7 @@
 import socket
 
 from src.modules.client_manangment.client_data import ClientData
-from src.modules.protocols.protocol import Packet
+from src.modules.protocols.protocol import Packet, SendPacket
 
 
 class ClientConnectionHandler:
@@ -26,6 +26,11 @@ class ClientConnectionHandler:
     def check_if_client_connected(self):
         pass
 
+    @property
+    def connected_clients(self):
+        return self._connected_clients
+
+
 class ClientCommunicationHandler:
 
     def __init__(self):
@@ -33,5 +38,6 @@ class ClientCommunicationHandler:
 
     def send_to_client(self, client_data: ClientData, packet: Packet):
         client_socket = client_data.conn
+        SendPacket.send_packet(client_socket, packet)
 
 
